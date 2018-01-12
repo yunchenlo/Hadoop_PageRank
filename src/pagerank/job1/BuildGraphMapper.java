@@ -1,4 +1,4 @@
-package pagerank;
+package pagerank.job1;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -27,7 +27,6 @@ public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
 			pagerank.PageRank.NODES.add(page);
 			System.out.println(page);
 		}
-		pagerank.PageRank.NODES.add("fuck shit");
 		
 		Text outkey = new Text(page.substring(7, page.length()-8));
 		
@@ -47,8 +46,7 @@ public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
 		}
 	}
 	
-	private String unescapeXML(String input) {
-        	
+	private String unescapeXML(String input) {	
 		input = input.replaceAll("&lt;", "<");
     	input = input.replaceAll("&gt;", ">");
     	input = input.replaceAll("&amp;", "&");

@@ -1,4 +1,4 @@
-package pagerank;
+package pagerank.job1;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
