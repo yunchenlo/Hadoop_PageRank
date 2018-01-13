@@ -1,4 +1,4 @@
-package pagerank.job1;
+package pagerank;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -14,22 +14,29 @@ import pagerank.PageRank;
 import java.util.HashSet;
 
 public class BuildGraphReducer extends Reducer<Text, Text, Text, Text>{
+	private HashSet<String> NODES = new HashSet<String>();
 	@Override
 	public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 		// append the initial rank
 		boolean first = true;
-		String links = pagerank.PageRank.NODES.size() + "|";
-		for (Text val:values) {
-			//if(PageRank.NODES.contains(val.toString()) ){
-				if(!first)
-					links += ", ";
-				links += val.toString();
-				first = false;
-			//}
+		if(key.toString().contains("\t")){
+			NODES.add(key.toString().substring(1, key.toString().length()));
 		}
-        
-        // write the result
-        context.write(key, new Text(links));
+		else {
+			double init = 1.0/NODES.size();
+			String links = init + "|";
+			for (Text val:values) {
+				if(NODES.contains(val.toString())){
+					if(!first)
+						links += ", ";
+					links += val.toString();
+					first = false;
+				}
+			}
+			// write the result
+	        context.write(key, new Text(links));
+		}
+       
 	}
 
 }

@@ -1,4 +1,4 @@
-package pagerank.job1;
+package pagerank;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -14,21 +14,20 @@ import pagerank.PageRank;
 import java.util.HashSet;
 
 public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
+	private Text space = new Text(" ");
 	@Override
 	public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-		
-		pagerank.PageRank.NODES.add("fuck shit");
 		/*  Match title pattern */ 
 		Pattern titlePattern = Pattern.compile("<title>(.+?)</title>");
 		Matcher titleMatcher = titlePattern.matcher( unescapeXML(key.toString()) );
 		String page = new String();
 		while (titleMatcher.find()){
 			page = titleMatcher.group();
-			pagerank.PageRank.NODES.add(page);
-			System.out.println(page);
 		}
 		
 		Text outkey = new Text(page.substring(7, page.length()-8));
+		/* Send key for building Title Table */
+		context.write(new Text( "\t" + page.substring(7, page.length()-8) ) , new Text(""));
 		
 		/*  Match link pattern */
         Pattern linkPattern = Pattern.compile("\\[\\[(.+?)([\\|#]|\\]\\])");
@@ -36,17 +35,27 @@ public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
 		while (linkMatcher.find()){
 			String link = new String(linkMatcher.group());
 			if(link.substring(link.length()) == "|" || link.substring(link.length()) == "#") {
-				Text outvalue = new Text(link.substring(2, link.length()-1));
+				String Caplink = new String(capitalizeFirstLetter(link.substring(2, link.length()-1)));
+				Text outvalue = new Text(Caplink);
+				
 				context.write(outkey, outvalue);
 			}
 			else {
-				Text outvalue = new Text(link.substring(2, link.length()-2));
+				String Caplink = new String(capitalizeFirstLetter(link.substring(2, link.length()-2)));
+				Text outvalue = new Text(Caplink);
+				
 				context.write(outkey, outvalue);
 			}
 		}
 	}
-	
-	private String unescapeXML(String input) {	
+	private String capitalizeFirstLetter(String original) {
+	    if (original == null || original.length() == 0) {
+	        return original;
+	    }
+	    return original.substring(0, 1).toUpperCase() + original.substring(1);
+	}
+	private String unescapeXML(String input) {
+        	
 		input = input.replaceAll("&lt;", "<");
     	input = input.replaceAll("&gt;", ">");
     	input = input.replaceAll("&amp;", "&");

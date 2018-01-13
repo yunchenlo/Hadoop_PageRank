@@ -3,7 +3,7 @@ JFLAGS      :=
 
 SRC_DIR     := src
 CLASS_DIR   := bin
-SRC_FILE    := $(SRC_DIR)/*/*.java $(SRC_DIR)/*/*/*.java
+SRC_FILE    := $(SRC_DIR)/*/*.java 
 
 CLASS_PATH  := `hadoop classpath`
 
