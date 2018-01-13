@@ -54,7 +54,7 @@ public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
 		//count new PageRank
 		double newRank = 0.15 / N + 0.85 * sumShareOtherPageRanks + 0.85 * dangleDivN;
 		double err = newRank - pageRank;
-		context.getCounter(Status.error).increment(err);
+		context.getCounter(Status.error).increment((long)err);
 		String newLink = newRank + "|" + N + "||" + links;
 		context.write(new Text(title), new Text(newLink));
 	}

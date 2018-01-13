@@ -35,11 +35,12 @@ public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
 		/*  Match link pattern */
         Pattern linkPattern = Pattern.compile("\\[\\[(.+?)([\\|#]|\\]\\])");
 		Matcher linkMatcher = linkPattern.matcher( unescapeXML(key.toString()) );
+		
 		while (linkMatcher.find()){
 			String link = new String(linkMatcher.group());
 			// potential problem
-			if(link.substring(link.length()) == "|" || link.substring(link.length()) == "#") {
-				String Caplink = new String(capitalizeFirstLetter(link.substring(2, link.length()-1)));
+			if(link.substring(link.length(), link.length()) == "|" || link.substring(link.length(), link.length()) == "#") {
+				String Caplink = new String(capitalizeFirstLetter(link.substring(2, link.length())));
 				Text outvalue = new Text(Caplink);
 				
 				context.write(outkey, outvalue);
@@ -51,6 +52,7 @@ public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
 				context.write(outkey, outvalue);
 			}
 		}
+		context.write(outkey, new Text(""));
 	}
 	
 	private String capitalizeFirstLetter(String original) {

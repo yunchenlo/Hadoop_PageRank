@@ -13,6 +13,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.counters.*;
+import org.apache.hadoop.mapreduce.Counters;
 
 import pagerank.PageRank;
 import pagerank.CalculateMapper;
@@ -27,7 +28,7 @@ public class Calculate {
 	}
 	
 	public boolean Calculate(String[] args) throws Exception {
-		double ReturnErr = 10.0;
+		long ReturnErr = (long) 10.0;
 		String in = new String();
 		String out = new String();
 		//while(ReturnErr > 0.001) {
@@ -63,13 +64,14 @@ public class Calculate {
 	        job.waitForCompletion(true);
 	        
 	        // update counter value
-	        Counters cn=job.getCounters();
-	        ReturnErr = cn.getCounter(Status.error);
+	        //Counters cn = job.getCounters();
+	        //ReturnErr = cn.getCounter(Status.error);
+	        ReturnErr = job.getCounters().findCounter(Status.error).getValue();
 	        System.out.println("Error = " + ReturnErr);
 	        
 	        // update iteration number
 	        //PageRank.numIter ++;
 		}
-        return 1;
+        return true;
     }
 }

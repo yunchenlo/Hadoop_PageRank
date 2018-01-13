@@ -21,7 +21,7 @@ public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 	@Override
 	public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
 		// init counter value
-		context.getCounter(Status.error).setValue(0.0);
+		context.getCounter(Status.error).setValue((long)0.0);
 		
 		// string variables
 		String rank = new String();
@@ -32,7 +32,7 @@ public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 		Pattern rankPattern = Pattern.compile("(.+?)|");
 		Matcher rankMatcher = rankPattern.matcher( value.toString());
 		while (rankMatcher.find()) {
-			rank = rankMatcher.group().substring(0, rankMatcher.group().length()-1);
+			rank = rankMatcher.group().replaceAll("|", "");
 		}
 		
 		// find N
@@ -54,8 +54,8 @@ public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 		
 		if(C > 0){
 			// write the PR(ti)/C
+			Text pageRankWithTotalLinks = new Text(String.valueOf(Double.parseDouble(rank)/C));
 			for (String otherPage : allOtherPages) { 
-	            Text pageRankWithTotalLinks = new Text(Double.parseDouble(rank)/C);
 	            context.write(new Text(otherPage), pageRankWithTotalLinks); 
 	        }
 		}
