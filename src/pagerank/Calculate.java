@@ -18,13 +18,10 @@ import pagerank.PageRank;
 import pagerank.CalculateMapper;
 import pagerank.CalculateReducer;
 
+
 public class Calculate {
 	public static NumberFormat NF = new DecimalFormat("00");
-	
-	public enum Status {
-	    error
-	};
-	
+		
 	public Calculate(){
 		
 	}
@@ -33,7 +30,8 @@ public class Calculate {
 		double ReturnErr = 10.0;
 		String in = new String();
 		String out = new String();
-		while(ReturnErr > 0.001) {
+		//while(ReturnErr > 0.001) {
+		for(PageRank.numIter = 0; PageRank.numIter < 1; PageRank.numIter++) {
 			Configuration conf = new Configuration();
 			
 			Job job = Job.getInstance(conf, "Calculate");
@@ -70,7 +68,7 @@ public class Calculate {
 	        System.out.println("Error = " + ReturnErr);
 	        
 	        // update iteration number
-	        PageRank.numIter ++;
+	        //PageRank.numIter ++;
 		}
         return 1;
     }
