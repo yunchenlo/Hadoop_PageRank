@@ -23,26 +23,29 @@ public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
 		double dangleDivN = 0.0;
 		String title = new String();
 		
-		for(Text val: values) {
-			// count (sum pr of dangling nodes)/N
-			if(key.toString().startsWith(" ")){
-				String[] split = val.toString().split("\\t");
+		/*
+		// count (sum pr of dangling nodes)/N
+		if(key.toString().startsWith("|")){
+			for(Text val: values) {
+				String[] split = val.toString().split("|");
 				DanglePageRank =  Double.parseDouble(split[0]);
 				N = Integer.parseInt(split[1]);
 				dangleDivN += DanglePageRank/N;
 			}
-			else {
+		}
+		else {
+			for (Text val: values) {
 				if(val.toString().startsWith("|")){
 					Pattern rankPattern = Pattern.compile("|(.+?)||");
 					Matcher rankMatcher = rankPattern.matcher( val.toString());
 					while (rankMatcher.find()) {
-						pageRank = Double.parseDouble(rankMatcher.group().substring(1,rankMatcher.group().length()-2));
+						pageRank = Double.parseDouble(rankMatcher.group(1).toString());
 					}
 					
 					Pattern linkPattern = Pattern.compile("||(.+?)");
 					Matcher linkMatcher = linkPattern.matcher( val.toString());
 					while(linkMatcher.find()) {
-						links = linkMatcher.group().substring(2);
+						links = linkMatcher.group(1);
 					}
 					title = key.toString();
 				}
@@ -51,11 +54,15 @@ public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
 				}
 			}
 		}
+		
 		//count new PageRank
 		double newRank = 0.15 / N + 0.85 * sumShareOtherPageRanks + 0.85 * dangleDivN;
 		double err = newRank - pageRank;
 		context.getCounter(Status.error).increment((long)err);
-		String newLink = newRank + "|" + N + "||" + links;
-		context.write(new Text(title), new Text(newLink));
+		String newV = newRank + "|" + N + "||" + links;
+		context.write(new Text(title), new Text(newV));
+		*/
+		for(Text val : values)
+			context.write(key, val);
 	}
 }

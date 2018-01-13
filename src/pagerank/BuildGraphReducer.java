@@ -24,13 +24,15 @@ public class BuildGraphReducer extends Reducer<Text, Text, Text, Text>{
 		// append the initial rank
 		boolean first = true;
 		if(key.toString().startsWith(" ")){
-			NODES.add(key.toString().substring(1, key.toString().length()));
-		}
+			for(Text val:values){
+				NODES.add(val.toString());
+			}
+		}	
 		else {
 			double init = 1.0/NODES.size();
-			String links = init + "|" + NODES.size() + "||";
+			String links = String.valueOf(init) + "|" + NODES.size() + "||";
 			for (Text val:values) {
-				if(NODES.contains(val.toString())){
+				if(NODES.contains(val.toString()) && val.toString().equals(key.toString()) != true && !val.toString().equals("")){
 					if(!first)
 						links += ",";
 					links += val.toString();

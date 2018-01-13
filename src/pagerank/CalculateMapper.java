@@ -13,7 +13,7 @@ import pagerank.Calculate;
 /*
  * Inputs : <Title, pagerank | N || linkA,linkB,...>
  * Mapper outputs two kinds of key value pairs
- * <"\s"+ dangling node, pagerank + N >, <link, pagerank/C> <title, | pagerank || links>
+ * <"\s"+ dangling node, pagerank | N >, <link, pagerank/C> <title, | pagerank || links>
  */
 
 public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
@@ -29,42 +29,48 @@ public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 		String N = new String();
 		
 		// find rank
-		Pattern rankPattern = Pattern.compile("(.+?)|");
+		Pattern rankPattern = Pattern.compile("[0-9]*\\.?[0-9]+\\|");
 		Matcher rankMatcher = rankPattern.matcher( value.toString());
 		while (rankMatcher.find()) {
-			rank = rankMatcher.group().replaceAll("|", "");
+			rank = rankMatcher.group(1);
 		}
-		
+		/*
 		// find N
 		Pattern nPattern = Pattern.compile("|(.+?)||");
 		Matcher nMatcher = nPattern.matcher( value.toString());
 		while (nMatcher.find()) {
-			N = nMatcher.group().substring(1,nMatcher.group().length()-2);
+			N = nMatcher.group(1);
 		}
 		
 		// find link
 		Pattern linkPattern = Pattern.compile("||(.+?)");
 		Matcher linkMatcher = linkPattern.matcher( value.toString());
 		while(linkMatcher.find()) {
-			links = linkMatcher.group().substring(2);
+			links = linkMatcher.group(1);
 		}
 		
-		String[] allOtherPages = links.split(",");
-		int C = allOtherPages.length;
+		int C = 0;
 		
-		if(C > 0){
-			// write the PR(ti)/C
-			Text pageRankWithTotalLinks = new Text(String.valueOf(Double.parseDouble(rank)/C));
-			for (String otherPage : allOtherPages) { 
-	            context.write(new Text(otherPage), pageRankWithTotalLinks); 
-	        }
+		if(links != null){
+			// cal and write the PR(ti)/C
+			String[] allOtherPages = links.split(",");
+			C = allOtherPages.length;
+			double dangleAvg = Double.parseDouble(rank)/C;
+			Text pageRankDivOutLinks = new Text(String.valueOf(dangleAvg));
+			if(C > 0){
+				for (String otherPage : allOtherPages) { 
+		            context.write(new Text(otherPage), pageRankDivOutLinks); 
+		        }
+			}
 		}
 		else {
 			// write dangling number and N
-			context.write( new Text(" " + key.toString()) , new Text(rank + "\t" + N));
+			context.write( new Text("|" + key.toString()) , new Text(rank + "|" + N));
 		}
 		// write original title link pair
-		context.write(key, new Text("|" + rank + "||" + links));
+		 
+		 */
+		context.write(key, new Text(rank));
 		
 	}
 }

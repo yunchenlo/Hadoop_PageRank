@@ -40,12 +40,12 @@ public class PageRank{
         }
 		
 		// Job 2: Calculate
-		/*Calculate job2 = new Calculate();
+		Calculate job2 = new Calculate();
 		complete = job2.Calculate(args);
 		if (!complete) {
             System.exit(1);
         }
-        */
+        
 		
 		// Job 3: Sort
 		System.out.println("DONE!");

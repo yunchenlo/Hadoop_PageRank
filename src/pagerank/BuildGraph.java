@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 import pagerank.PageRank;
 import pagerank.BuildGraphMapper;
@@ -30,6 +31,7 @@ public class BuildGraph {
 
         // set the class of each stage in mapreduce
         job.setMapperClass(BuildGraphMapper.class);
+        job.setPartitionerClass(BuildGraphPartitioner.class);
         job.setReducerClass(BuildGraphReducer.class);
 
         // set the output class of Mapper and Reducer
