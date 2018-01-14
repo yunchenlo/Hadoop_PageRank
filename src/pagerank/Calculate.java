@@ -14,6 +14,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.counters.*;
 import org.apache.hadoop.mapreduce.Counters;
+import org.apache.hadoop.fs.FileSystem;
 
 import pagerank.PageRank;
 import pagerank.CalculateMapper;
@@ -54,9 +55,18 @@ public class Calculate {
 	        // set the number of reducer
 	        job.setNumReduceTasks(PageRank.NumReducer);
 	
+	        
+	        
+	        
 	        // Change input output path
 	        in = args[1] + "/iter" + NF.format(PageRank.numIter);
 	        out = args[1] + "/iter" + NF.format(PageRank.numIter+1);
+	        
+	     // delete the output path if it exists
+	        FileSystem fs = FileSystem.get(new Configuration());
+	        if (fs.exists(new Path(out))) {
+	            fs.delete(new Path(out), true);
+	        }
 	        
 	        // add input/output path
 	        FileInputFormat.addInputPath(job, new Path(in));

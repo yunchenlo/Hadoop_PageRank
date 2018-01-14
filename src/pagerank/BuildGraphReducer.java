@@ -14,7 +14,7 @@ import java.util.HashSet;
 
 /*
  * Input : < "\t" + Title, space > <Title, Link> (Link need Capitalized first letter)
- * Output : <Title, 1/N | N || linkA,linkB,...>
+ * Output : <Title, 1/N | N || linkA<tab>linkB<tab>...>
  */
 
 public class BuildGraphReducer extends Reducer<Text, Text, Text, Text>{
@@ -30,15 +30,16 @@ public class BuildGraphReducer extends Reducer<Text, Text, Text, Text>{
 		}	
 		else {
 			double init = 1.0/NODES.size();
-			String links = String.valueOf(init) + "|" + NODES.size() + "||";
+			String links = String.valueOf(init) + "#" + NODES.size() + "##";
 			for (Text val:values) {
 				if(NODES.contains(val.toString()) && val.toString().equals(key.toString()) != true && !val.toString().equals("")){
 					if(!first)
-						links += ",";
+						links += "\t";
 					links += val.toString();
 					first = false;
 				}
 			}
+			links += "###";
 			// write the result
 	        context.write(key, new Text(links));
 		}
