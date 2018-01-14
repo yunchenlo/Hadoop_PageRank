@@ -32,7 +32,7 @@ public class BuildGraphReducer extends Reducer<Text, Text, Text, Text>{
 			double init = 1.0/NODES.size();
 			String links = String.valueOf(init) + "#" + NODES.size() + "##";
 			for (Text val:values) {
-				if(NODES.contains(val.toString()) && val.toString().equals(key.toString()) != true && !val.toString().equals("")){
+				if(NODES.contains(val.toString()) && !val.toString().startsWith(" ")){
 					if(!first)
 						links += "\t";
 					links += val.toString();

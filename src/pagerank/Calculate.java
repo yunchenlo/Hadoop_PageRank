@@ -34,9 +34,10 @@ public class Calculate {
 		String out = new String();
 		//while(ReturnErr > 0.001) {
 		for(PageRank.numIter = 0; PageRank.numIter < 1; PageRank.numIter++) {
-			Configuration conf = new Configuration();
 			
+			Configuration conf = new Configuration();
 			Job job = Job.getInstance(conf, "Calculate");
+			
 	        job.setJarByClass(Calculate.class);
 			
 	        // set the inputFormatClass <K, V>
@@ -55,14 +56,11 @@ public class Calculate {
 	        // set the number of reducer
 	        job.setNumReduceTasks(PageRank.NumReducer);
 	
-	        
-	        
-	        
 	        // Change input output path
 	        in = args[1] + "/iter" + NF.format(PageRank.numIter);
 	        out = args[1] + "/iter" + NF.format(PageRank.numIter+1);
 	        
-	     // delete the output path if it exists
+	        // delete the output path if it exists
 	        FileSystem fs = FileSystem.get(new Configuration());
 	        if (fs.exists(new Path(out))) {
 	            fs.delete(new Path(out), true);
@@ -71,14 +69,14 @@ public class Calculate {
 	        // add input/output path
 	        FileInputFormat.addInputPath(job, new Path(in));
 	        FileOutputFormat.setOutputPath(job, new Path(out));
+	        
 	        job.waitForCompletion(true);
 	        
 	        // update counter value
-	        //Counters cn = job.getCounters();
-	        //ReturnErr = cn.getCounter(Status.error);
 	        ReturnErr = job.getCounters().findCounter(Status.error).getValue();
-	        System.out.println("Error = " + ReturnErr);
-	        
+	        double dErr = ReturnErr/1E18;
+	        //System.out.println("Error = " + Double.longBitsToDouble(ReturnErr));
+	        System.out.println("Error = " + dErr);
 	        // update iteration number
 	        //PageRank.numIter ++;
 		}

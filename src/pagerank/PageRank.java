@@ -40,6 +40,7 @@ public class PageRank{
         }
 		
 		// Job 2: Calculate
+		
 		Calculate job2 = new Calculate();
 		complete = job2.Calculate(args);
 		if (!complete) {

@@ -19,8 +19,6 @@ import pagerank.Calculate;
 public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 	@Override
 	public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-		// init counter value
-		context.getCounter(Status.error).setValue((long)0.0);
 		
 		// string variables
 		String rank = "";
@@ -28,27 +26,29 @@ public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 		String N = "";
 		
 		// find rank
-		Pattern rankPattern = Pattern.compile("(.*?)#");
+		Pattern rankPattern = Pattern.compile("(.+?)#");
 		Matcher rankMatcher = rankPattern.matcher( value.toString());
 		rankMatcher.find();
 		rank = rankMatcher.group(1);
 		
-		
 		// find N
-		Pattern nPattern = Pattern.compile("#(.*?)##");
+		Pattern nPattern = Pattern.compile("#(.+?)##");
 		Matcher nMatcher = nPattern.matcher( value.toString());
 		nMatcher.find();
 		N = nMatcher.group(1);
 		
 		// find links
-		Pattern linkPattern = Pattern.compile("##(.*?)###");
+		Pattern linkPattern = Pattern.compile("##(.+?)###");
 		Matcher linkMatcher = linkPattern.matcher( value.toString());
+		if(linkMatcher.find())
+			links = linkMatcher.group(1);
 		
-		linkMatcher.find();
-		links = linkMatcher.group(1);
+		// dangling pattern
+		Pattern danglePattern = Pattern.compile("#####");
+		Matcher dangleMatcher = danglePattern.matcher( value.toString());
 
 		int C = 0;
-		if(links.length()>0){
+		if(!dangleMatcher.find()){
 			// cal and write the PR(ti)/C
 			String[] allOtherPages = links.split("\t");
 			C = allOtherPages.length;
@@ -56,15 +56,14 @@ public class CalculateMapper extends Mapper<Text, Text, Text, Text>{
 				double outAvg = Double.parseDouble(rank)/C;
 				Text pageRankDivOutLinks = new Text(String.valueOf(outAvg));
 				for (String otherPage : allOtherPages) {
-					if(otherPage.length()>0) 
-						context.write(new Text(" " + otherPage), pageRankDivOutLinks); 
+					//if(otherPage.length()>0) 
+					context.write(new Text(" " + otherPage), pageRankDivOutLinks); 
 		        }
-			}	
-			
+			}
 		}
 		else {
 			// write dangling number and N
-			context.write( new Text("\t" + key.toString()) , new Text(rank + "#" + N));
+			context.write( new Text("\t") , new Text(rank + "#" + N));
 		}
 		// write original title link pair
 		context.write(key, value);
