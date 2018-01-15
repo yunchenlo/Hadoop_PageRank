@@ -27,7 +27,7 @@ public class BuildGraph {
         job.setJarByClass(BuildGraph.class);
 		
         // set the inputFormatClass <K, V>
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class);
 
         // set the class of each stage in mapreduce
         job.setMapperClass(BuildGraphMapper.class);

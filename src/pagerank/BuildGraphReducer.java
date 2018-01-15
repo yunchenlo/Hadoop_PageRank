@@ -30,16 +30,22 @@ public class BuildGraphReducer extends Reducer<Text, Text, Text, Text>{
 		}	
 		else {
 			double init = 1.0/NODES.size();
-			String links = String.valueOf(init) + "#" + NODES.size() + "##";
+			String links = "<PR>" + String.valueOf(init) + "</PR>";
+			links += "<N>" + NODES.size() + "</N>" + "<content>";
 			for (Text val:values) {
-				if(NODES.contains(val.toString()) && !val.toString().startsWith(" ")){
-					if(!first)
-						links += "\t";
-					links += val.toString();
-					first = false;
+				Pattern linkPattern = Pattern.compile("<link>(.+?)</link>");
+				Matcher linkMatcher = linkPattern.matcher(val.toString());
+				while(linkMatcher.find()){
+					String link = linkMatcher.group(1);
+					if(NODES.contains(link) && !val.toString().equals("")){
+						if(!first)
+							links += "<tab>";
+						links += link;
+						first = false;
+					}
 				}
 			}
-			links += "###";
+			links += "</content>";
 			// write the result
 	        context.write(key, new Text(links));
 		}

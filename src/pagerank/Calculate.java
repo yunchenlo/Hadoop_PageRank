@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.counters.*;
 import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.fs.FileSystem;
@@ -33,7 +34,7 @@ public class Calculate {
 		String in = new String();
 		String out = new String();
 		//while(ReturnErr > 0.001) {
-		for(PageRank.numIter = 0; PageRank.numIter < 1; PageRank.numIter++) {
+		for(PageRank.numIter = 0; PageRank.numIter < 5; PageRank.numIter++) {
 			
 			Configuration conf = new Configuration();
 			Job job = Job.getInstance(conf, "Calculate");
@@ -41,7 +42,7 @@ public class Calculate {
 	        job.setJarByClass(Calculate.class);
 			
 	        // set the inputFormatClass <K, V>
-	        job.setInputFormatClass(KeyValueTextInputFormat.class);
+	        job.setInputFormatClass(TextInputFormat.class);
 	
 	        // set the class of each stage in mapreduce
 	        job.setMapperClass(CalculateMapper.class);

@@ -15,14 +15,12 @@ import java.util.*;
  * < "\t" + Title, space > <Title, Link> (Link need Capitalized first letter)
  */
 
-public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
+public class BuildGraphMapper extends Mapper<LongWritable, Text, Text, Text>{
 	@Override
-	public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-		// Match page pattern
-		
+	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 		/*  Match title pattern */ 
 		Pattern titlePattern = Pattern.compile("<title>(.+?)</title>");
-		Matcher titleMatcher = titlePattern.matcher(key.toString() );
+		Matcher titleMatcher = titlePattern.matcher(value.toString() );
 		if (titleMatcher.find()) {
 			String title = titleMatcher.group(1);
 			title = this.unescapeXML(title);
@@ -32,30 +30,28 @@ public class BuildGraphMapper extends Mapper<Text, Text, Text, Text>{
 			}
 		}
 		
-		//for(String page : pages) {
-		
-		Matcher titleMatcherInPage = titlePattern.matcher(key.toString());
-		titleMatcherInPage.find();
-		String title = titleMatcherInPage.group(1);
-		// No need capitalizeFirstLetter
-		title = this.unescapeXML(title);
-		
-		
-		Text K = new Text(title);
-		//  Match link pattern
-		Pattern linkPattern = Pattern.compile("\\[\\[(.+?)([\\|#]|\\]\\])");
-		Matcher linkMatcher = linkPattern.matcher(key.toString());
-		while (linkMatcher.find()) {
-			String link = linkMatcher.group(1);
-			link = this.unescapeXML(link);
-			// Need capitalizeFirstLetter
-			link = this.capitalizeFirstLetter(link);
-			Text V = new Text(link);
+		titleMatcher = titlePattern.matcher(value.toString());
+		while(titleMatcher.find()){
+			String title = titleMatcher.group(1);
+			// No need capitalizeFirstLetter
+			title = this.unescapeXML(title);
+
+			Text K = new Text("<title>" + title + "</title>");
+			//  Match link pattern
+			Pattern linkPattern = Pattern.compile("\\[\\[(.+?)([\\|#]|\\]\\])");
+			Matcher linkMatcher = linkPattern.matcher(value.toString());
+			while (linkMatcher.find()) {
+				String link = linkMatcher.group(1);
+				link = this.unescapeXML(link);
+				// Need capitalizeFirstLetter
+				link = this.capitalizeFirstLetter(link);
+				
+				context.write(K, new Text( "<link>" + link + "</link>"));
+			}
+			// For dangling node
+			Text V = new Text("");
 			context.write(K, V);
 		}
-		// For dangling node
-		Text V = new Text(" ");
-		context.write(K, V);
 	}
 	
 	private String capitalizeFirstLetter(String original) {

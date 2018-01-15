@@ -53,17 +53,17 @@ public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
 			
 			// pass the value
 			for (Text val: values) {
-				Pattern rankPattern = Pattern.compile("(.+?)#");
+				Pattern rankPattern = Pattern.compile("<PR>(.+?)</PR>");
 				Matcher rankMatcher = rankPattern.matcher( val.toString());
 				rankMatcher.find();
 				oldRank = Double.parseDouble(rankMatcher.group(1).toString());
 				
-				Pattern nPattern = Pattern.compile("#(.+?)##");
+				Pattern nPattern = Pattern.compile("<N>(.+?)</N>");
 				Matcher nMatcher = nPattern.matcher( val.toString());
 				nMatcher.find();
 				N = Integer.parseInt(nMatcher.group(1).toString());
 				
-				Pattern linkPattern = Pattern.compile("##(.+?)###");
+				Pattern linkPattern = Pattern.compile("<content>(.+?)</content>");
 				Matcher linkMatcher = linkPattern.matcher( val.toString());
 				if(linkMatcher.find())
 					links = linkMatcher.group(1);
@@ -82,8 +82,10 @@ public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
 				long error = (long)(1E18*err);
 				context.getCounter(Status.error).increment(error);
 				
-				Text newK = key;
-				Text newV = new Text(newRank + "#" + N + "##" + links + "###");
+				Text newK = new Text("<title>" + key.toString() + "</title>");
+				String valueString = "<PR>" + newRank + "</PR>" + "<N>" + N + "</N>";
+				valueString += "<content>" + links + "</content>";
+				Text newV = new Text(valueString);
 				
 				context.write(newK,newV);
 			}
