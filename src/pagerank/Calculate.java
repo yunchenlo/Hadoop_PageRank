@@ -33,10 +33,11 @@ public class Calculate {
 	
 	public boolean Calculate(String[] args) throws Exception {
 		long ReturnErr = (long) 10.0;
+		double dErr = 20.0;
 		String in = new String();
 		String out = new String();
-		//while(ReturnErr > 0.001) {
-		for(PageRank.numIter = 0; PageRank.numIter < 2; PageRank.numIter++) {
+		while(dErr > 0.001) {
+		//for(PageRank.numIter = 0; PageRank.numIter < 2; PageRank.numIter++) {
 			
 			Configuration conf = new Configuration();
 			Job job = Job.getInstance(conf, "Calculate");
@@ -78,13 +79,11 @@ public class Calculate {
 	        
 	        // update counter value
 	        ReturnErr = job.getCounters().findCounter(Status.error).getValue();
-	        double dErr = ReturnErr/1E18;
-	        //System.out.println("Error = " + Double.longBitsToDouble(ReturnErr));
+	        dErr = ReturnErr/1E18;
 	        System.out.println("Error = " + dErr);
 	        errMap.put(String.valueOf(PageRank.numIter), String.valueOf(dErr));
 	        // update iteration number
-	        //PageRank.numIter ++;
-	        
+	        PageRank.numIter ++;
 		}
         return true;
     }
