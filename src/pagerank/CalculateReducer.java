@@ -15,11 +15,10 @@ import java.util.HashMap;
  * Output : <Title, newPR | N || linkA,linkB,...>
  */
 
-public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
+public class CalculateReducer extends Reducer<Text, Text, Text, Text>{
 	private HashMap<String, String> TMap = new HashMap<String, String>();
 	private HashMap<String, String> DangMap = new HashMap<String, String>();
 	public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-		
 		String links = "";
 		double sumShareOtherPageRanks = 0.0;
 		double oldRank = 0.0;
@@ -47,10 +46,12 @@ public class CalculateReducer  extends Reducer<Text, Text, Text, Text>{
 				sumShareOtherPageRanks += Double.parseDouble(val.toString());
 			}
 			context.getCounter(Status.numNormal).increment(1);
-			TMap.put(key.toString().substring(1), String.valueOf(sumShareOtherPageRanks));
+			Pattern pagePattern = Pattern.compile("</No>(.+?)<end>");
+			Matcher pageMatcher = pagePattern.matcher( key.toString());
+			if(pageMatcher.find())
+				TMap.put(pageMatcher.group(1), String.valueOf(sumShareOtherPageRanks));
 		}
 		else {
-			
 			// pass the value
 			for (Text val: values) {
 				Pattern rankPattern = Pattern.compile("<PR>(.+?)</PR>");

@@ -12,7 +12,7 @@ else
         iter=$1
 fi
 
-INPUT_FILE=testcase/
+INPUT_FILE=testcase/input.txt
 OUTPUT_FILE=PageRank/Output
 JAR=PageRank.jar
 

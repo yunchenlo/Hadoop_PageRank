@@ -61,13 +61,16 @@ public class CalculateMapper extends Mapper<LongWritable, Text, Text, Text>{
 			double outAvg = Double.parseDouble(rank)/C;
 			Text prDivOutLinks = new Text(String.valueOf(outAvg));
 			for (String otherPage : allOtherPages) {
-				context.write(new Text(" " + otherPage), prDivOutLinks); 
+				for (int i = 0; i < PageRank.NumReducer; i++){
+					context.write(new Text(" " + "<No>" + i + "</No>" + otherPage + "<end>"), prDivOutLinks); 
+				}
 	        }
-
 		}
 		else {
 			// write dangling number and N
-			context.write( new Text("\t") , new Text(rank + "#" + N));
+			for(int i= 0; i < PageRank.NumReducer; i++){
+				context.write( new Text("\t" + i) , new Text(rank + "#" + N));
+			}
 		}
 		// write original title link pair
 		context.write(new Text(title), value);

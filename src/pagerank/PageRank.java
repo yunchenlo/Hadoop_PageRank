@@ -19,6 +19,7 @@ import pagerank.BuildGraphMapper;
 import pagerank.BuildGraphReducer;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class PageRank{
 	
@@ -28,9 +29,10 @@ public class PageRank{
 
 	public static void main(String[] args) throws Exception {
 		/*
-		 * InputDir : args[0]
+		 * InputFile : args[0]
 		 * OutDir : args[1]
 		 */
+		long time1= System.nanoTime();
 		
 		// Job 1: BuildGraph
 		BuildGraph job1 = new BuildGraph();
@@ -49,7 +51,17 @@ public class PageRank{
         
 		
 		// Job 3: Sort
-		System.out.println("DONE!");
+		Sort job3 = new Sort();
+		complete = job3.Sort(args);
+		if (!complete) {
+            System.exit(1);
+        }
+		
+		long time2 = System.nanoTime();
+		long timeSpent = time2-time1;
+		System.out.println("DONE with "+ NumReducer + " reducers, time is:" + timeSpent/1E9 +"s");
+		System.out.println("iter/err info:");
+		System.out.println(Arrays.asList(Calculate.errMap));
         System.exit(0);
 	}
 

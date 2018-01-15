@@ -20,11 +20,13 @@ import org.apache.hadoop.fs.FileSystem;
 import pagerank.PageRank;
 import pagerank.CalculateMapper;
 import pagerank.CalculateReducer;
+import java.util.HashMap;
+
 
 
 public class Calculate {
 	public static NumberFormat NF = new DecimalFormat("00");
-		
+	public static HashMap<String, String> errMap = new HashMap<String, String>();
 	public Calculate(){
 		
 	}
@@ -34,7 +36,7 @@ public class Calculate {
 		String in = new String();
 		String out = new String();
 		//while(ReturnErr > 0.001) {
-		for(PageRank.numIter = 0; PageRank.numIter < 5; PageRank.numIter++) {
+		for(PageRank.numIter = 0; PageRank.numIter < 2; PageRank.numIter++) {
 			
 			Configuration conf = new Configuration();
 			Job job = Job.getInstance(conf, "Calculate");
@@ -46,6 +48,7 @@ public class Calculate {
 	
 	        // set the class of each stage in mapreduce
 	        job.setMapperClass(CalculateMapper.class);
+	        job.setPartitionerClass(CalculatePartitioner.class);
 	        job.setReducerClass(CalculateReducer.class);
 	
 	        // set the output class of Mapper and Reducer
@@ -78,8 +81,10 @@ public class Calculate {
 	        double dErr = ReturnErr/1E18;
 	        //System.out.println("Error = " + Double.longBitsToDouble(ReturnErr));
 	        System.out.println("Error = " + dErr);
+	        errMap.put(String.valueOf(PageRank.numIter), String.valueOf(dErr));
 	        // update iteration number
 	        //PageRank.numIter ++;
+	        
 		}
         return true;
     }
