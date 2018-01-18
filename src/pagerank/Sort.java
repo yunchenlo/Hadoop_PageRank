@@ -52,13 +52,15 @@ public class Sort {
         job.setNumReduceTasks(1);
 
         // Change input output path
-        in = args[1] + "/iter" + NF.format(PageRank.numIter);
+        in = args[1] + "/iter" + NF.format(PageRank.numIter%2);
         out = args[1] + "/ans";
+        
+        String kill = new String(args[1] + "/iter" + NF.format((PageRank.numIter+1)%2));
         
         // delete the output path if it exists
         FileSystem fs = FileSystem.get(new Configuration());
-        if (fs.exists(new Path(out))) {
-            fs.delete(new Path(out), true);
+        if (fs.exists(new Path(kill))) {
+            fs.delete(new Path(kill), true);
         }
         
         // add input/output path

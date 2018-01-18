@@ -62,8 +62,8 @@ public class Calculate {
 	        job.setNumReduceTasks(PageRank.NumReducer);
 	
 	        // Change input output path
-	        in = args[1] + "/iter" + NF.format(PageRank.numIter);
-	        out = args[1] + "/iter" + NF.format(PageRank.numIter+1);
+	        in = args[1] + "/iter" + NF.format(PageRank.numIter%2);
+	        out = args[1] + "/iter" + NF.format((PageRank.numIter+1)%2);
 	        
 	        // delete the output path if it exists
 	        FileSystem fs = FileSystem.get(new Configuration());
